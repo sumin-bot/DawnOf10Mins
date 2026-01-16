@@ -34,8 +34,13 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
 	class UInputAction* MoveAction;
 
-	// 이동 함수
-	void Move(const FInputActionValue& Value);
+	// 적 감지 센서
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat")
+	class USphereComponent* DetectSphere;
+
+	// 타겟팅한 적
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat")
+	class AActor* CurrentTarget;
 
 	// 카메라 컴포넌트
 	UPROPERTY(VisibleAnywhere)
@@ -43,5 +48,15 @@ public:
 
 	UPROPERTY(VisibleAnywhere)
 	class UCameraComponent* FollowCamera;
+
+	// 이동 함수
+	void Move(const FInputActionValue& Value);
+
+	// 타겟 함수
+	void FindTarget();
+
+	// 플레이어 스텟
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat")
+	float AttackRange = 500.f;
 
 };
