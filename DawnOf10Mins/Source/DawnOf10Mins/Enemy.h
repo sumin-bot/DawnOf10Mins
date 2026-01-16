@@ -25,6 +25,21 @@ public:
 
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 
+	UFUNCTION()
+	void OnPlayerOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	UFUNCTION()
+	void OnPlayerOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
+	// 실제 데미지를 주는 함수
+	void ApplyContinuousDamage();
+
+	// 타이머 핸들
+	FTimerHandle DamageTimerHandle;
+
+	// 현재 겹쳐있는 플레이어 보관
+	class APlayerCharacter* OverlappedPlayer;
+
 	// 적 스탯
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stat")
 	float Health;
@@ -35,6 +50,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stat")
 	float MoveSpeed = 300.f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stat")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat")
 	float Damage = 10.f;
+
+	UPROPERTY(EditAnywhere, Category = "Combat")
+	float DamageInterval = 0.5f;
 };

@@ -11,6 +11,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/SphereComponent.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -48,6 +49,8 @@ void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
+    Health = MaxHealth;
+
     // 입력 컨텍스트 등록
     if (APlayerController* PC = Cast<APlayerController>(GetController()))
     {
@@ -156,4 +159,20 @@ void APlayerCharacter::Fire()
 
         GetWorld()->SpawnActor<AProjectile>(ProjectileClass, SpawnLocation, SpawnRotation, SpawnParams);
     }
+}
+
+float APlayerCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser)
+{
+    float DamageApplied = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
+    Health -= DamageApplied;
+    UE_LOG(LogTemp, Warning, TEXT("Player HP: %f"), Health);
+
+    if (Health <= 0.f)
+    {
+        // 게임 오버 로직 (일단은 리스타트 정도로 처리 가능)
+        UGameplayStatics::OpenLevel(this, FName(*GetWorld()->GetName()));
+    }
+
+    return DamageApplied;
 }
