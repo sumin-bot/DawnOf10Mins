@@ -47,13 +47,21 @@ void AEnemy::Tick(float DeltaTime)
 
 	if (PlayerPawn)
 	{
-		// 2. 방향 계산 (플레이어 위치 - 내 위치)
-		FVector Direction = PlayerPawn->GetActorLocation() - GetActorLocation();
-		Direction.Z = 0.f; // 높이 차이는 무시
-		Direction.Normalize();
+		// 1. 방향과 거리를 동시에 구합니다.
+		FVector ToPlayer = PlayerPawn->GetActorLocation() - GetActorLocation();
+		float Distance = ToPlayer.Size();
+		FVector Direction = ToPlayer.GetSafeNormal();
 
-		// 3. 이동 입력
-		AddMovementInput(Direction, 1.f);
+		// 2. 거리 제한 (Dead-zone) 설정
+		if (Distance > 15.f)
+		{
+			AddMovementInput(Direction, 1.0f);
+
+			// 적이 플레이어를 바라보게 하고 싶다면 (회전 로직)
+			FRotator TargetRot = Direction.Rotation();
+			FRotator NewRot = FRotator(0.f, TargetRot.Yaw, 0.f);
+			SetActorRotation(FMath::RInterpTo(GetActorRotation(), NewRot, DeltaTime, 5.f));
+		}
 	}
 }
 

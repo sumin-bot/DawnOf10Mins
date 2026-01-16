@@ -71,16 +71,22 @@ void APlayerCharacter::Tick(float DeltaTime)
     // 타겟이 있다면 그쪽을 바라보게 함
     if (CurrentTarget)
     {
-        GetCharacterMovement()->bOrientRotationToMovement = false;
+        // 적과의 거리 계산
+        float DistanceToTarget = FVector::Dist(GetActorLocation(), CurrentTarget->GetActorLocation());
 
-        // 내 위치에서 타겟 위치를 향한 회전값 계산
-        FRotator TargetRotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), CurrentTarget->GetActorLocation());
+        if (DistanceToTarget > 20.f)
+        {
+            GetCharacterMovement()->bOrientRotationToMovement = false;
 
-        // Z축(Yaw)만 회전하도록 설정
-        FRotator NewRotation = FRotator(0.f, TargetRotation.Yaw, 0.f);
+            // 내 위치에서 타겟 위치를 향한 회전값 계산
+            FRotator TargetRotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), CurrentTarget->GetActorLocation());
 
-        // 부드럽게 회전 
-        SetActorRotation(FMath::RInterpTo(GetActorRotation(), NewRotation, DeltaTime, 10.f));
+            // Z축(Yaw)만 회전하도록 설정
+            FRotator NewRotation = FRotator(0.f, TargetRotation.Yaw, 0.f);
+
+            // 부드럽게 회전 
+            SetActorRotation(FMath::RInterpTo(GetActorRotation(), NewRotation, DeltaTime, 10.f));
+        }
 
         if (GetWorld()->GetTimeSeconds() - LastFireTime > FireRate)
         {
