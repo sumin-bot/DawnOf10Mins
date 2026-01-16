@@ -14,6 +14,7 @@ APlayerCharacter::APlayerCharacter()
     // 1. 카메라 설정 (Top Down 고정 뷰)
     CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
     CameraBoom->SetupAttachment(RootComponent);
+    CameraBoom->bDoCollisionTest = false;
     CameraBoom->TargetArmLength = 800.f;
     CameraBoom->SetRelativeRotation(FRotator(-60.f, 0.f, 0.f));
     CameraBoom->bInheritPitch = false;
