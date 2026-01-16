@@ -3,6 +3,7 @@
 
 #include "PlayerCharacter.h"
 #include "Enemy.h"
+#include "Projectile.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -67,14 +68,26 @@ void APlayerCharacter::Tick(float DeltaTime)
     // 타겟이 있다면 그쪽을 바라보게 함
     if (CurrentTarget)
     {
+        GetCharacterMovement()->bOrientRotationToMovement = false;
+
         // 내 위치에서 타겟 위치를 향한 회전값 계산
         FRotator TargetRotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), CurrentTarget->GetActorLocation());
 
-        // Z축(Yaw)만 회전하도록 설정 (위아래로 꺾이지 않게)
+        // Z축(Yaw)만 회전하도록 설정
         FRotator NewRotation = FRotator(0.f, TargetRotation.Yaw, 0.f);
 
-        // 부드럽게 회전 (Interp를 쓰면 더 자연스럽습니다)
+        // 부드럽게 회전 
         SetActorRotation(FMath::RInterpTo(GetActorRotation(), NewRotation, DeltaTime, 10.f));
+
+        if (GetWorld()->GetTimeSeconds() - LastFireTime > FireRate)
+        {
+            Fire();
+            LastFireTime = GetWorld()->GetTimeSeconds();
+        }
+    }
+    else
+    {
+        GetCharacterMovement()->bOrientRotationToMovement = true;
     }
 }
 
@@ -130,3 +143,17 @@ void APlayerCharacter::FindTarget()
     CurrentTarget = NearestActor;
 }
 
+void APlayerCharacter::Fire()
+{
+
+    if (ProjectileClass)
+    {
+        FVector SpawnLocation = GetActorLocation() + GetActorForwardVector() * 100.f + GetActorUpVector() * 50.f;
+        FRotator SpawnRotation = GetActorRotation();
+
+        FActorSpawnParameters SpawnParams;
+        SpawnParams.Owner = this;
+
+        GetWorld()->SpawnActor<AProjectile>(ProjectileClass, SpawnLocation, SpawnRotation, SpawnParams);
+    }
+}

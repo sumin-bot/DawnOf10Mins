@@ -49,14 +49,26 @@ public:
 	UPROPERTY(VisibleAnywhere)
 	class UCameraComponent* FollowCamera;
 
+	// 발사체 클래스
+	UPROPERTY(EditAnywhere, Category = "Combat")
+	TSubclassOf<class AProjectile> ProjectileClass;
+
 	// 이동 함수
 	void Move(const FInputActionValue& Value);
 
 	// 타겟 함수
 	void FindTarget();
 
+	// 발사 함수
+	void Fire();
+
 	// 플레이어 스텟
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat")
 	float AttackRange = 500.f;
+
+	UPROPERTY(EditAnywhere, Category = "Combat")
+	float FireRate = 1.f;
+
+	float LastFireTime = 0.f;
 
 };
