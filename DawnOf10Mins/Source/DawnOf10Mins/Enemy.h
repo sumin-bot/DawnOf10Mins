@@ -23,6 +23,8 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
+
 	// Àû ½ºÅÈ
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stat")
 	float Health;

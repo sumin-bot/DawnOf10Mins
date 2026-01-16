@@ -48,3 +48,17 @@ void AEnemy::Tick(float DeltaTime)
 	}
 }
 
+float AEnemy::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser)
+{
+	float DamageApplied = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
+	Health -= DamageApplied;
+	UE_LOG(LogTemp, Warning, TEXT("Enemy HP: %f"), Health);
+
+	if (Health <= 0.f)
+	{
+		Destroy(); // »ç¸Á!
+	}
+
+	return DamageApplied;
+}
